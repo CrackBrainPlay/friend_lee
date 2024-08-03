@@ -1,43 +1,55 @@
 'use client'
-import axios from 'axios';
-import { useEffect, useState } from 'react';
+import React, { useState, useLayoutEffect } from 'react';
 import NotFound from '@/app/not-found';
 
 
 const MainPage = () => {
-    const [message, setMessage] = useState<string>('');
-    const [error, setError] = useState<boolean>(false);
+    const [loading, setLoading] = useState(true);
+    const [showNotFound, setShowNotFound] = useState(false);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get('/api/check');
+    useLayoutEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const key = urlParams.get('key');
 
-                if (response.status === 404) {
-                    setError(true);
-                    setMessage('404 - Page not found');
-                } else {
-                    setMessage(response.data.message);
+        if (key) {
+            const socket = new WebSocket('ws://localhost:3001');
+
+            let intervalId: NodeJS.Timeout;
+
+            socket.onopen = () => {
+                intervalId = setInterval(() => {
+                    socket.send(key);
+                }, 5000);
+
+                window.history.replaceState({}, '', '/');
+                setLoading(false);
+            };
+
+            socket.onmessage = (event) => {
+                console.log('Received message from server:', event.data);
+            };
+
+            socket.onerror = (error) => {
+                console.error('WebSocket Error:', error);
+            };
+
+            return () => {
+                if (intervalId) {
+                    clearInterval(intervalId);
                 }
-            } catch (error) {
-                setError(true);
-                setMessage('404 - Page not found');
-            }
-        };
-
-        fetchData();
+                socket.close();
+            };
+        } else {
+            setShowNotFound(true);
+            setLoading(false);
+        }
     }, []);
 
-    if (error) {
-        return (
-            <NotFound />
-        )
+    if (loading) {
+        return null;
     }
 
-
-    return (
-        <h1>Home Page</h1>
-    );
+    return showNotFound ? <NotFound /> : <h1>home</h1>;
 };
 
 export default MainPage;
