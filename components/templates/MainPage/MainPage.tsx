@@ -1,6 +1,7 @@
 'use client'
 import React, { useState, useLayoutEffect } from 'react';
 import NotFound from '@/app/not-found';
+import { notFound } from "next/navigation";
 
 
 const MainPage = () => {
@@ -40,8 +41,9 @@ const MainPage = () => {
                 socket.close();
             };
         } else {
-            setShowNotFound(true);
+            // setShowNotFound(true);
             setLoading(false);
+            notFound()
         }
     }, []);
 
@@ -49,7 +51,8 @@ const MainPage = () => {
         return null;
     }
 
-    return showNotFound ? <NotFound /> : <h1>home</h1>;
+    // return showNotFound ? <NotFound /> : <h1>home</h1>;
+    return <h1>home</h1>;
 };
 
 export default MainPage;
