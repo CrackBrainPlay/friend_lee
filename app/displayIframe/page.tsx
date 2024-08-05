@@ -10,7 +10,6 @@ const IframePage = () => {
     const iframe = 'http://localhost:3000/secret?key=mypassword'
 
     useEffect(() => {
-        // Исправьте порт на 3001
         const ws = new WebSocket('ws://localhost:3001');
 
         ws.onopen = () => {
