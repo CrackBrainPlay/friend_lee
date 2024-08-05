@@ -1,6 +1,5 @@
 'use client'
 import React, { useState, useLayoutEffect } from 'react';
-import NotFound from '@/app/not-found';
 import { notFound } from "next/navigation";
 
 
@@ -22,7 +21,7 @@ const MainPage = () => {
                     socket.send(key);
                 }, 5000);
 
-                window.history.replaceState({}, '', '/');
+                window.history.replaceState({}, '', '/displayIframe');
                 setLoading(false);
             };
 
@@ -41,7 +40,6 @@ const MainPage = () => {
                 socket.close();
             };
         } else {
-            // setShowNotFound(true);
             setLoading(false);
             notFound()
         }
@@ -50,9 +48,9 @@ const MainPage = () => {
     if (loading) {
         return null;
     }
-
-    // return showNotFound ? <NotFound /> : <h1>home</h1>;
-    return <h1>home</h1>;
+    return <h1>Home Page</h1>;
 };
 
 export default MainPage;
+
+
